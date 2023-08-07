@@ -1,0 +1,34 @@
+/**
+ * Register file or memory containing 8 registers, each 16 bit-wide. Out holds the value
+ * stored at the memory location specified by address. If load == 1, then 
+ * the in value is loaded into the memory location specified by address 
+ * (the loaded value will be emitted to out from the next time step onward).
+ * 
+ * Design from the book "The Elements of Computing Systems"
+ * by Nisan and Schocken, MIT Press.
+ * 
+ * Author: Naga Kandasamy
+ * Date created: July 12, 2020
+ * 
+ * Student name(s): Julia Fleming
+ * Date modified: July 21, 2023 
+ */
+
+CHIP RAM8 {
+    IN in[16], load, address[3];
+    OUT out[16];
+
+    PARTS:
+    DMux8Way(in=load, sel=address, a=temp0, b=temp1, c=temp2, d=temp3, e=temp4, f=temp5, g=temp6, h=temp7);
+
+    Register(in=in, load=temp0, out=out0);
+    Register(in=in, load=temp1, out=out1);
+    Register(in=in, load=temp2, out=out2);
+    Register(in=in, load=temp3, out=out3);
+    Register(in=in, load=temp4, out=out4);
+    Register(in=in, load=temp5, out=out5);
+    Register(in=in, load=temp6, out=out6);
+    Register(in=in, load=temp7, out=out7);
+
+    Mux8Way16(a=out0, b=out1, c=out2, d=out3, e=out4, f=out5, g=out6, h=out7, sel=address, out=out);
+}
