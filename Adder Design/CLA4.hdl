@@ -1,0 +1,65 @@
+/**
+ * 4-bit CLA.
+ * Author: Naga Kandasamy
+ * Date created: June 29, 2020
+ * Date modified: September 12, 2021
+ * 
+ * Student name(s): Julia Fleming
+ * Date modified: July 7, 2023
+ */
+
+CHIP CLA4 {
+    IN x[4], y[4], cin;     // 4-bit inputs
+    OUT z[4], cout;         // 4-bit output, 1 carry out bit
+
+    PARTS:
+    And(a=x[0], b=y[0],  out=g0);
+    Or(a=x[0],  b=y[0],  out=p0); 
+
+    And(a=x[1], b=y[1], out=g1);
+    Or(a=x[1], b=y[1], out=p1);
+
+    And(a=x[2], b=y[2], out=g2);
+    Or(a=x[2], b=y[2], out=p2);
+
+    And(a=x[3],     b=y[3],       out=g3);
+    Or(a=x[3],      b=y[3],       out=p3);  //into circuit block  
+
+    And(a=p0,       b=cin,         out=temp0);
+    Or( a=g0,       b=temp0,       out=c0);
+    And(a=p1,       b=g0,          out=temp1);
+    And(a=p1,       b=temp0,       out=temp2);
+
+    Or( a=g1,       b=temp1,       out=ortemp0);
+    Or( a=ortemp0,  b=temp2,       out=c1);
+
+    And(a=p2,       b=g1,          out=temp3);
+    And(a=p2,       b=temp1,       out=temp4);
+    And(a=p2,       b=p1,          out=temp5);
+    And(a=temp5,    b=temp0,       out=temp6);
+
+    Or( a=g2,       b=temp3,       out=ortemp1);
+    Or( a=temp4,    b=temp6,       out=ortemp2);
+    Or( a=ortemp1,  b=ortemp2,     out=c2);
+
+    And(a=p3,       b=g2,          out=temp7);
+    And(a=p3,       b=temp3,       out=temp8);
+    And(a=p3,       b=p2,          out=temp9);
+    And(a=temp9,    b=temp1,       out=temp10);
+    And(a=temp9,    b=temp2,       out=temp11);
+
+    Or( a=g3,       b=temp7,       out=ortemp3);
+    Or( a=temp8,    b=temp10,      out=ortemp4);
+    Or( a=ortemp3,  b=ortemp4,     out=ortemp5);
+    Or( a=ortemp5,  b=temp11,      out=cout);
+
+    FullAdder(x=x[0], y=y[0], cin=cin, z=z[0]);
+    FullAdder(x=x[1], y=y[1], cin=c0,  z=z[1]);
+    FullAdder(x=x[2], y=y[2], cin=c1,  z=z[2]);
+    FullAdder(x=x[3], y=y[3], cin=c2,  z=z[3]);
+ 
+
+
+
+
+}
