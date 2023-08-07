@@ -1,0 +1,92 @@
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location . If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction.
+ * 
+ * Author: Naga Kandasamy
+ * Date created: October 6, 2020
+ * Date modified: July 21, 2023
+ * 
+ * Student name(s): Julia Fleming 
+ * Date modified: 7/4/23
+ * 
+ * Notes: This project is part of www.nand2tetris.org and the book "The Elements of Computing Systems" by Nisan and Schocken, MIT Press.
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         
+        instruction[16],
+        reset;
+
+    OUT outM[16],
+        writeM,
+        addressM[15],
+        pc[15];
+
+    PARTS:
+    Mux16(a=instruction, b=aluO,  sel=instruction[15], out=muxO1);
+    Not(in=instruction[15], out=notOp);
+    Or(a=instruction[5], b=notOp, out=aregL); 
+    ARegister(in=muxO1, load=aregL, out=aregO);
+    Mux16(a=aregO, b=inM, sel=instruction[12], out=muxO2);
+    And(a=instruction[4], b=instruction[15], out=dregL);
+    DRegister(in=aluO, load=dregL, out=dregO);
+    
+    Not(in=instruction[2], out=notjumpFlag1);
+    Not(in=instruction[1], out=notjumpFlag2);
+    Not(in=instruction[0], out=notjumpFlag3);
+    And(a=instruction[2], b=true, out=jumpFlag1);
+    And(a=instruction[1], b=true, out=jumpFlag2);
+    And(a=instruction[0], b=true, out=jumpFlag3);
+    
+    Not(in=zr, out=notzr);
+    Not(in=ng, out=notng);
+    And(a=notzr, b=notng, out=jumpIfGreaterThan); 
+    And(a=zr, b=notng, out=jumpIfEqual); 
+    And(a=notzr, b=ng, out=jumpIfLessThan);
+    Xor(a=zr, b=ng, out=jumpIfLessOrEqual);
+    And(a=notjumpFlag1, b=notjumpFlag2, out=temp11);
+    And(a=jumpFlag3, b=jumpIfGreaterThan, out=temp12);
+    And(a=temp11, b=temp12, out=temp1);
+    And(a=notjumpFlag1, b=jumpFlag2, out=temp21);
+    And(a=notjumpFlag3, b=jumpIfEqual, out=temp22);
+    And(a=temp21, b=temp22, out=temp2);
+    And(a=jumpFlag3, b=notng, out=temp32);
+    And(a=temp21, b=temp32, out=temp3);
+    And(a=jumpFlag1, b=notjumpFlag2, out=temp41);
+    And(a=notjumpFlag3, b=jumpIfLessThan, out=temp42);
+    And(a=temp41, b=temp42, out=temp4);
+    And(a=jumpFlag3, b=notzr, out=temp52);
+    And(a=temp41, b=temp52, out=temp5);
+    And(a=jumpFlag1, b=jumpFlag2, out=temp61);
+    And(a=notjumpFlag3, b=jumpIfLessOrEqual, out=temp62);
+    And(a=temp61, b=temp62, out=temp6);
+    And(a=temp61, b=jumpFlag3, out=temp7);
+    Or8Way(in[0]=false, in[1]=temp1,in[2]=temp2,in[3]=temp3,in[4]=temp4,in[5]=temp5,in[6]=temp6,in[7]=temp7, out=pcload1);
+    And(a=pcload1, b=instruction[15], out=pcload);
+    Not(in=pcload, out=pcinc);
+    PC(in=aregO, load=pcload, inc=pcinc, reset=reset, out[0..14]=pc);
+
+    ALU(x=dregO, y=muxO2, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluO, zr=zr, ng=ng);
+    
+    And16(a=aluO, b=true, out=outM);
+    And16(a=aregO, b=true, out[0..14]=addressM);
+    And(a=instruction[3], b=instruction[15], out=writeM);
+}
