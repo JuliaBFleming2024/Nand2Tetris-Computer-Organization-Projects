@@ -1,0 +1,15 @@
+##Julia Fleming 
+
+#Program can be run with the following commands within a directory containing the provided files
+
+# python vm_translator_v2.py add-final.asm ./add
+# python vm_translator_v2.py arithmetic-final.asm ./arithmetic
+# python vm_translator_v2.py mult-final.asm ./mult
+# Python vm_translator_v2.py factorial-final.asm ./factorial
+# python vm_translator_v2.py fibonacci-final.asm ./fibonacci
+
+
+
+##
+
+## Thank you! 
