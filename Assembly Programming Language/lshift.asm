@@ -1,0 +1,21 @@
+
+@16
+D=M
+@18
+M=D
+
+(WHILE)
+	@17
+	MD=M-1
+	@END
+	D;JLT
+	@18
+	D=M
+	M=M+D
+	@WHILE
+	0;JMP
+
+(END)
+
+@END
+0;JMP

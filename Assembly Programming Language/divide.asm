@@ -1,0 +1,40 @@
+@18
+M=0
+
+@17
+D=M
+@END
+D;JEQ
+
+@16
+D=M
+@19
+M=D
+
+@17
+D=M
+@19
+D=M-D
+@END
+D;JLT
+
+(WHILE)
+	@17
+	D=M
+	@19
+	MD=M-D
+	@REMAINDER
+	D;JLT
+	@18
+	M=M+1
+	@WHILE
+	0;JMP
+(REMAINDER)
+	@17
+	D=M
+	@19
+	M=M+D
+(END)
+
+@END
+0;JMP

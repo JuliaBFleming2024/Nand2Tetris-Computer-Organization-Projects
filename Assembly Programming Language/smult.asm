@@ -1,0 +1,41 @@
+@18
+M = 0
+
+@17
+D=M
+@WHILE_POSITIVE
+D;JGT
+
+@WHILE_NEGATIVE
+D;JLT
+
+(WHILE_POSITIVE)
+	@16
+	D=M
+	@18
+	M=M+D
+	@17
+	M=M-1
+	@17
+	D=M
+	@WHILE_POSITIVE
+	D;JGT
+	@END
+	0;JMP
+(WHILE_NEGATIVE)
+	@16
+	D=M
+	@18
+	M=M-D
+	@17
+	M=M+1
+	@17
+	D=M
+	@WHILE_NEGATIVE
+	D;JLT
+	@END
+	0;JMP
+(END)
+
+@END
+0;JMP

@@ -1,0 +1,69 @@
+@22
+M=1		
+
+(WHILE)	
+	@22
+	D=M-1 	
+	@END
+	D;JLT
+	
+	@22
+	M=0
+	
+	@23
+	M=0		
+	(FOR)
+		@17
+		D=M-1	
+		@23
+		D=M-D	
+		@WHILE
+		D;JGE
+		
+		@23
+		D=M		
+		@16
+		D=M+D	
+		@18
+		M=D		
+		A=M 	
+		D=M 	
+		@20 	
+		M=D 	
+		@18
+		D=M 	
+		@19
+		M=D+1	
+		A=M 	
+		D=M 	
+		@20
+		D=M-D 	
+		@SWAP	
+		D;JGT	
+		@INCREMENT
+		0;JMP	
+		(SWAP)
+			@19
+			A=M 	
+			D=M 	
+			@18
+			A=M 	
+			M=D 	
+			@20
+			D=M 	
+			@19
+			A=M 	
+			M=D 	
+			@22
+			M=1 	
+			@INCREMENT
+			0;JMP
+		(INCREMENT)
+		@23
+		M=M+1	
+		@FOR
+		0;JMP	
+(END)
+
+@END
+0;JMP
